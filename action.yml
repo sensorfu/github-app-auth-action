@@ -2,8 +2,10 @@ name: "GitHub App authentication"
 description: ""
 inputs:
   app-id:
-    description: GitHub App id
-    required: true
+    description: GitHub App ID
+    deprecationMessage: Use 'client-id' instead.
+  client-id:
+    description: GitHub App Client ID
   private-key:
     description: GitHub App Private Key
 runs:
@@ -14,7 +16,7 @@ runs:
     - uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
       id: app-token
       with:
-        app-id: ${{ inputs.app-id }}
+        client-id: ${{ case(inputs.client-id != '', inputs.client-id, inputs.app-id) }}
         private-key: ${{ inputs.private-key }}
         owner: ${{ github.repository_owner }}
     - run: echo "${{ steps.app-token.outputs.token }}" | gh auth login --with-token
